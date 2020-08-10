@@ -3,7 +3,7 @@ from django.http import Http404
 
 # Create your views here.
 from .models import BlogPost
-
+from .forms import BlogPostModelForm
 #
 # def blog_post_detail_page(request, slug):
 #     # queryset = BlogPost.objects.filter(slug=slug)  # query->data base->data->django render it
@@ -23,8 +23,15 @@ def blog_post_list_view(request):
 
 def blog_post_create_view(request):
     # for creating objects we need using a form
-    context = {"form": None}
-    template_name = "blog/create.html"
+    form = BlogPostModelForm(request.POST or None)
+    if form.is_valid():
+        print(form.cleaned_data)
+        # obj = BlogPostModelForm.objects.create(**form.cleaned_data)
+        obj = form.save(commit=False)
+        obj.save()
+        form= BlogPostModelForm()
+    context = {"form": form}
+    template_name = "form.html"
     return render(request, template_name, context)
 
 
